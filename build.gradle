@@ -1,0 +1,98 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+        classpath 'com.novoda:bintray-release:0.3.4'
+        classpath 'tech.saymagic:daffodil:0.3.7'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    tasks.withType(Javadoc) {
+        options {
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+    }
+}
+
+
+ext {
+    publishVersion = '1.0.0'
+    groupId = 'tech.saymagic'
+    userOrg = 'saymagic'
+    desc = 'Annotation-triggered method call logging for your debug builds.'
+    website = 'https://github.com/saymagic/daffodil'
+    licences = ['Apache-2.0']
+    uploadName = 'Daffodil'
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+subprojects {
+    repositories {
+        jcenter()
+    }
+
+    group = groupId
+    version = publishVersion
+    def name2artifactId = ['plugin': 'daffodil', 'lib': 'daffodil-lib']
+    if (project.name in name2artifactId.keySet()) {
+        apply plugin: 'maven'
+        gradle.taskGraph.whenReady { taskGraph ->
+            def pomTask = taskGraph.getAllTasks().find {
+                it.path == ":$project.name:generatePomFileForMavenPublication"
+            }
+            if (pomTask == null) return;
+            pomTask.doLast {
+                file("build/publications/maven/pom-default.xml").delete()
+                pom {
+                    //noinspection GroovyAssignabilityCheck
+                    project {
+                        name project.name
+                        artifactId name2artifactId.get(project.name)
+                        packaging 'jar'
+                        description desc
+                        url website
+                        version publishVersion
+
+                        scm {
+                            url website
+                            connection website
+                            developerConnection website
+                        }
+
+                        licenses {
+                            license {
+                                name 'The Apache Software License, Version 2.0'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'saymagic'
+                                name 'saymagic'
+                                email 'saymagic.dev@gmail.com'
+                            }
+                        }
+                    }
+                }.writeTo("build/publications/maven/pom-default.xml")
+            }
+        }
+    }
+}

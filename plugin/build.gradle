@@ -1,0 +1,48 @@
+apply plugin: 'groovy'
+apply plugin: 'com.novoda.bintray-release'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile gradleApi(), {
+        ext {
+            fatJarExclude = true
+        }
+    }
+    compile localGroovy(), {
+        ext {
+            fatJarExclude = true
+        }
+    }
+    compile "com.android.tools.build:gradle:2.1.0", {
+        ext {
+            fatJarExclude = true
+        }
+    }
+    testCompile 'junit:junit:4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publish {
+    artifactId = 'daffodil'
+    userOrg = rootProject.userOrg
+    groupId = rootProject.groupId
+    publishVersion = rootProject.publishVersion
+    desc = rootProject.desc
+    website = rootProject.website
+    licences = rootProject.licences
+}
+
+
+
