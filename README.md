@@ -15,9 +15,11 @@ daffodil {
     enabled true
 }
 
+```
+
 2. Add `@ Daffodil` Annotation on methods, method call's detail info will automatically be recorded.
 
-```java
+```
 @Daffodil
 public int max(int a, int b) {
     return Math.max(a, b);
