@@ -65,7 +65,7 @@ buildscript {
     jcenter()
    }
   dependencies {
-    classpath 'tech.saymagic:daffodil:1.0.0'
+    classpath 'tech.saymagic:daffodil:1.1.0'
   }
 }
 ```
@@ -79,7 +79,7 @@ apply plugin: 'tech.saymagic.daffodil'
 
 ```
 dependencies {
-  compile 'tech.saymagic: daffodil-lib:1.0.0'
+  compile 'tech.saymagic: daffodil-lib:1.1.0'
 }
 ```
 
