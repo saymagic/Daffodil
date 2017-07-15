@@ -7,17 +7,14 @@ import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformException
 import com.android.build.api.transform.TransformInput
-import com.android.build.api.transform.TransformInvocation
 import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
-import com.google.common.collect.ImmutableSet
 import com.android.build.api.transform.Format
-import org.gradle.internal.impldep.org.codehaus.plexus.util.IOUtil
+import com.google.common.collect.Sets
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
-import sun.misc.IOUtils
 import tech.saymagic.daffodil.plugin.ClassGuard
 import tech.saymagic.daffodil.plugin.asm.DaffodilClassVisiter
 
@@ -38,15 +35,14 @@ public class DaffodilTransform extends Transform {
 
     @Override
     Set<QualifiedContent.ContentType> getInputTypes() {
-//        return ImmutableSet.of(
-//                QualifiedContent.DefaultContentType.CLASSES
-//        )
         return TransformManager.CONTENT_CLASS
     }
 
     @Override
     Set<QualifiedContent.Scope> getScopes() {
-        return TransformManager.SCOPE_FULL_PROJECT
+        return Sets.immutableEnumSet(
+                QualifiedContent.Scope.PROJECT,
+        )
     }
 
     @Override

@@ -2,15 +2,16 @@ package tech.saymagic.daffodil.plugin
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import tech.saymagic.daffodil.plugin.transform.DaffodilTransform
 
 public class DaffodilPlugin implements Plugin<Project> {
 
-    AppPlugin androidPlugin
-
     AppExtension androidExtension
+
+    LibraryExtension libraryExtension
 
     DaffodilExtension daffodilExtension
 
@@ -18,15 +19,25 @@ public class DaffodilPlugin implements Plugin<Project> {
 
     void apply(Project project) {
         project.extensions.create(Constants.EXTENSION_NAME, DaffodilExtension)
-        androidPlugin = project.plugins.findPlugin(AppPlugin.class)
-        androidExtension = project.android
-        daffodilExtension = project.daffodil
+        daffodilExtension = project.extensions.findByType(DaffodilExtension.class)
+        androidExtension = project.extensions.findByType(AppExtension.class)
+        libraryExtension = project.extensions.findByType(LibraryExtension.class)
+
         daffodilTransform = new DaffodilTransform()
-        androidExtension.registerTransform(daffodilTransform)
+        if (androidExtension) {
+            println "register daffodilTransform for android project " + project.name
+            androidExtension.registerTransform(daffodilTransform)
+        }else if (libraryExtension) {
+            println "register daffodilTransform for library project " + project.name
+            libraryExtension.registerTransform(daffodilTransform)
+        } else {
+            throw new IllegalStateException("'android' or 'android-library' plugin does't exist!")
+        }
 
         project.afterEvaluate {
-            println "daffodilExtension.enabled = " + daffodilExtension.enabled
-            if(daffodilExtension && !daffodilExtension.enabled){
+            boolean enable = daffodilExtension == null ? true : daffodilExtension.enabled
+            println "daffodilExtension.enabled = " + enable
+            if(!enable){
                 println "daffodil extension was disabled."
                 daffodilTransform.enabled = false
             }else{
