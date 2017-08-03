@@ -79,7 +79,7 @@ apply plugin: 'tech.saymagic.daffodil'
 
 ```
 dependencies {
-  compile 'tech.saymagic: daffodil-lib:1.1.0'
+    compile 'tech.saymagic:daffodil-lib:1.1.0@aar'
 }
 ```
 
